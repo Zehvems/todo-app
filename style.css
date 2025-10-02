@@ -1,0 +1,36 @@
+/* domyślny ciemny */
+:root {
+  --bg: #121212;
+  --text: #eee;
+  --card: #1e1e1e;
+  --click: #18aabd;
+  --btn: #ffffff;
+}
+.btn {
+  background-color: var(--btn);
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.task {
+  background: var(--card);
+  border: 1px solid #333;
+  padding: 8px;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+/* jasny motyw */
+body.light {
+  --bg: #f6f7f9;
+  --text: #222;
+  --card: #fff;
+}
+.btn.clicked {
+  background-color: var(--click);
+  transition: background 0.1s ease, color 0.2s ease;
+}
