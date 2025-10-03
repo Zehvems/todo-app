@@ -15,7 +15,20 @@ buttons.forEach((btn) => {
     }, 200);
   });
 });
-
+addBtn.addEventListener("click", () => {
+  addTask();
+});
 themeBtn.addEventListener("click", () => {
   document.body.classList.toggle("light");
 });
+
+function addTask() {
+  const title = input.value.trim();
+  if (title != "") {
+    const li = document.createElement("li");
+    li.className = "task";
+    li.textContent = title;
+    taskList.appendChild(li);
+    input.value = "";
+  }
+}
