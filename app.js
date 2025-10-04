@@ -6,7 +6,10 @@ const buttons = document.querySelectorAll(".btn"); //buttons
 if (!themeBtn || !addBtn || !input || !taskList)
   throw new Error("Brak emelentu DOM!");
 //--------------------------------------------------------------------------
-
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") input.value = "";
+  if (e.key === "Enter") addTask();
+});
 buttons.forEach((btn) => {
   btn.addEventListener("click", () => {
     btn.classList.add("clicked");
@@ -20,6 +23,9 @@ addBtn.addEventListener("click", () => {
 });
 themeBtn.addEventListener("click", () => {
   document.body.classList.toggle("light");
+  document.body.classList.contains("light")
+    ? (themeBtn.innerText = "Motyw ciemny")
+    : (themeBtn.innerText = "Motyw jasny");
 });
 
 function addTask() {

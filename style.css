@@ -3,7 +3,7 @@
   --bg: #121212;
   --text: #eee;
   --card: #1e1e1e;
-  --click: #18aabd;
+  --click: #ffffff41;
   --btn: #ffffff;
 }
 .btn {
@@ -16,12 +16,53 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* lista bez kropek + odstępy */
+#taskList {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* karta zadania */
 .task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid #303030;
+  border-radius: 10px;
   background: var(--card);
-  border: 1px solid #333;
-  padding: 8px;
-  border-radius: 6px;
-  margin: 6px 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+/* treść + akcje */
+.task__name {
+  flex: 1;
+  margin-right: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-sm {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #ddd;
+  cursor: pointer;
+}
+.task--completed .task__name {
+  color: #999;
+  text-decoration: line-through;
+}
+.task:hover {
+  border-color: #4a4a4a;
 }
 
 /* jasny motyw */
@@ -32,5 +73,5 @@ body.light {
 }
 .btn.clicked {
   background-color: var(--click);
-  transition: background 0.1s ease, color 0.2s ease;
+  transition: background 0.05s ease, color 0.05s ease;
 }
