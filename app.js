@@ -5,12 +5,27 @@ const taskList = document.getElementById("taskList"); //lista tasków
 const buttons = document.querySelectorAll(".btn"); //buttons
 const state = { tasks: [], theme: "dark" }; // Struktura zadań, id, title, completed
 let idCounter = 1;
+//--------------------------------------------------------------------------
 if (!themeBtn || !addBtn || !input || !taskList)
   throw new Error("Brak emelentu DOM!");
-//--------------------------------------------------------------------------
+
+document.body.classList.contains("light")
+  ? (state.theme = "white")
+  : (state.theme = "black");
+for (const task of state.tasks) {
+  if (task.completed === true) {
+    const id = task.id;
+    const li = taskList.querySelector(`.task[data-id="${id}"]`);
+    if (!li) throw new Error("Brak elementu listy zdanym id ");
+    li.classList.add("task--completed");
+  }
+}
+
+//listeners----------------------------------------------------------------
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") input.value = "";
   if (e.key === "Enter") addTask();
+  if (e.key === "i") console.log(state);
 });
 //blink btn
 buttons.forEach((btn) => {
@@ -32,7 +47,17 @@ themeBtn.addEventListener("click", () => {
     ? ((themeBtn.innerText = "Motyw ciemny"), (state.theme = "white"))
     : ((themeBtn.innerText = "Motyw jasny"), (state.theme = "black"));
 });
-
+//remove task
+taskList.addEventListener("click", (e) => {
+  if (e.target.dataset.action != "delete") return;
+  const li = e.target.closest(".task");
+  if (!li) return;
+  const id = Number(li.dataset.id);
+  state.tasks = state.tasks.filter((t) => t.id !== id);
+  li.remove();
+});
+//functions------------------------------------------------------------------
+//add task
 function addTask() {
   //add task
   const title = input.value.trim();
@@ -43,16 +68,13 @@ function addTask() {
     input.value = "";
   }
 }
+//addtask to state , generate ID
 function addToState(title) {
   const task = { id: Date.now() + idCounter++, title, completed: false };
   state.tasks.push(task);
   console.log("addToState() -> Added/returned task:", task);
   return task;
 }
-
-document.body.classList.contains("light")
-  ? (state.theme = "white")
-  : (state.theme = "black");
 
 function createTaskNode(task) {
   //tworzenie struktury taska
@@ -68,9 +90,14 @@ function createTaskNode(task) {
   delBtn.className = "btn-sm";
   delBtn.textContent = "🗑";
   delBtn.dataset.action = "delete";
+  const toggleBtn = document.createElement("button");
+  toggleBtn.className = "btn";
+  toggleBtn.textContent = "✓";
+  toggleBtn.dataset.action = "toggle";
 
   li.appendChild(actions);
   li.appendChild(name);
   actions.appendChild(delBtn);
+  actions.appendChild(toggleBtn);
   return li;
 }
