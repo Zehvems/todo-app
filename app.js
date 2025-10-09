@@ -12,6 +12,7 @@ if (!themeBtn || !addBtn || !input || !taskList)
 document.body.classList.contains("light")
   ? (state.theme = "white")
   : (state.theme = "black");
+
 for (const task of state.tasks) {
   if (task.completed === true) {
     const id = task.id;
@@ -47,14 +48,27 @@ themeBtn.addEventListener("click", () => {
     ? ((themeBtn.innerText = "Motyw ciemny"), (state.theme = "white"))
     : ((themeBtn.innerText = "Motyw jasny"), (state.theme = "black"));
 });
-//remove task
+//remove/complete task btn
 taskList.addEventListener("click", (e) => {
-  if (e.target.dataset.action != "delete") return;
-  const li = e.target.closest(".task");
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
+
+  const action = btn.dataset.action;
+  if (action !== "delete" && action !== "toggle") return; // AND
+
+  const li = btn.closest(".task");
   if (!li) return;
   const id = Number(li.dataset.id);
-  state.tasks = state.tasks.filter((t) => t.id !== id);
-  li.remove();
+
+  if (action === "delete") {
+    state.tasks = state.tasks.filter((t) => t.id !== id);
+    li.remove();
+  } else if (action === "toggle") {
+    const t = state.tasks.find((t) => t.id === id);
+    if (!t) return;
+    t.completed = !t.completed;
+    li.classList.toggle("task--completed");
+  }
 });
 //functions------------------------------------------------------------------
 //add task
@@ -75,9 +89,8 @@ function addToState(title) {
   console.log("addToState() -> Added/returned task:", task);
   return task;
 }
-
+//tworzenie struktury taska
 function createTaskNode(task) {
-  //tworzenie struktury taska
   const li = document.createElement("li");
   li.className = "task";
   li.dataset.id = task.id; // dla późniejszych akcji
