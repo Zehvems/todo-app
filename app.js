@@ -4,11 +4,19 @@ const input = document.getElementById("taskInput"); //input zadanie
 const taskList = document.getElementById("taskList"); //lista tasków
 const buttons = document.querySelectorAll(".btn"); //buttons
 const state = { tasks: [], theme: "dark" }; // Struktura zadań, id, title, completed
+const saveBtn = document.getElementById("saveBtn");
+const clearBtn = document.getElementById("clearBtn");
 let idCounter = 1;
 //--------------------------------------------------------------------------
 if (!themeBtn || !addBtn || !input || !taskList)
   throw new Error("Brak emelentu DOM!");
-
+try {
+  state.tasks = load();
+  renderTasks();
+} catch (err) {
+  console.error("Błąd przy wczytywaniu localStorage:", err);
+  state.tasks = [];
+}
 document.body.classList.contains("light")
   ? (state.theme = "white")
   : (state.theme = "black");
@@ -21,8 +29,13 @@ for (const task of state.tasks) {
     li.classList.add("task--completed");
   }
 }
-
 //listeners----------------------------------------------------------------
+clearBtn.addEventListener("click", () => {
+  clearAll();
+});
+saveBtn.addEventListener("click", () => {
+  localStorage.setItem("savedTasks", JSON.stringify(state.tasks));
+});
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") input.value = "";
   if (e.key === "Enter") addTask();
@@ -37,6 +50,7 @@ buttons.forEach((btn) => {
     }, 200);
   });
 });
+
 //add task btn
 addBtn.addEventListener("click", () => {
   addTask();
@@ -113,4 +127,21 @@ function createTaskNode(task) {
   actions.appendChild(delBtn);
   actions.appendChild(toggleBtn);
   return li;
+}
+function renderTasks() {
+  taskList.innerHTML = "";
+  for (task of state.tasks) {
+    const li = createTaskNode(task);
+    taskList.appendChild(li);
+  }
+}
+function load() {
+  const data = localStorage.getItem("savedTasks");
+  if (!data) return []; // nic zapisane → pusta tablica
+  return JSON.parse(data);
+}
+function clearAll() {
+  localStorage.clearAll;
+  taskList.innerHTML = "";
+  state.tasks = [];
 }
