@@ -4,13 +4,16 @@
     <link rel="stylesheet" href="style.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TODOapp</title>
+    <title>Todo App</title>
   </head>
   <body>
-    <h1>TODO APP</h1>
-    <input id="taskInput" type="text" placeholder="Dodaj zadanie" />
-    <button id="addBtn" class="btn">Dodaj zadanie</button>
-    <button id="themeBtn" class="btn">Zmień motyw</button>
+    <h1>Todo App</h1>
+    <form id="taskForm">
+      <input id="taskInput" />
+      <button type="submit">Add</button>
+    </form>
+
+    <button id="themeBtn" class="btn">Light theme</button>
     <button id="saveBtn" class="btn">Save</button>
     <button id="clearBtn" class="btn">Clear</button>
     <ul id="taskList"></ul>

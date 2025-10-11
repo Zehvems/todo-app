@@ -1,15 +1,18 @@
-const themeBtn = document.getElementById("themeBtn"); //motyw przycisk
-const addBtn = document.getElementById("addBtn"); //dodaj zadanie przycisk
-const input = document.getElementById("taskInput"); //input zadanie
-const taskList = document.getElementById("taskList"); //lista tasków
-const buttons = document.querySelectorAll(".btn"); //buttons
-const state = { tasks: [], theme: "dark" }; // Struktura zadań, id, title, completed
+const buttons = document.querySelectorAll(".btn"); //Bottons
+const themeBtn = document.getElementById("themeBtn");
 const saveBtn = document.getElementById("saveBtn");
 const clearBtn = document.getElementById("clearBtn");
+
+const input = document.getElementById("taskInput"); //Other
+const taskList = document.getElementById("taskList");
+const form = document.getElementById("taskForm");
+const STORAGE_KEY = "tasks";
 let idCounter = 1;
+
+const state = { tasks: [], theme: "dark" }; //State
 //--------------------------------------------------------------------------
-if (!themeBtn || !addBtn || !input || !taskList)
-  throw new Error("Brak emelentu DOM!");
+if (!themeBtn || !saveBtn || !input || !taskList || !clearBtn || !form)
+  throw new Error("Missing DOM element!");
 try {
   state.tasks = load();
   renderTasks();
@@ -18,15 +21,14 @@ try {
   state.tasks = [];
 }
 document.body.classList.contains("light")
-  ? (state.theme = "white")
-  : (state.theme = "black");
+  ? (state.theme = "light")
+  : (state.theme = "dark");
 
 for (const task of state.tasks) {
   if (task.completed === true) {
     const id = task.id;
     const li = taskList.querySelector(`.task[data-id="${id}"]`);
-    if (!li) throw new Error("Brak elementu listy zdanym id ");
-    li.classList.add("task--completed");
+    if (task.completed) li.classList.add("task--completed");
   }
 }
 //listeners----------------------------------------------------------------
@@ -34,11 +36,11 @@ clearBtn.addEventListener("click", () => {
   clearAll();
 });
 saveBtn.addEventListener("click", () => {
-  localStorage.setItem("savedTasks", JSON.stringify(state.tasks));
+  save();
 });
+//KeyListener
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") input.value = "";
-  if (e.key === "Enter") addTask();
   if (e.key === "i") console.log(state);
 });
 //blink btn
@@ -52,15 +54,17 @@ buttons.forEach((btn) => {
 });
 
 //add task btn
-addBtn.addEventListener("click", () => {
+form.addEventListener("submit", (e) => {
+  e.preventDefault(); // zatrzymaj wysyłanie
   addTask();
 });
+
 //theme switch
 themeBtn.addEventListener("click", () => {
   document.body.classList.toggle("light");
   document.body.classList.contains("light")
-    ? ((themeBtn.innerText = "Motyw ciemny"), (state.theme = "white"))
-    : ((themeBtn.innerText = "Motyw jasny"), (state.theme = "black"));
+    ? ((themeBtn.innerText = "Dark theme"), (state.theme = "light"))
+    : ((themeBtn.innerText = "Light theme"), (state.theme = "dark"));
 });
 //remove/complete task btn
 taskList.addEventListener("click", (e) => {
@@ -115,33 +119,41 @@ function createTaskNode(task) {
   actions.className = "actions";
   const delBtn = document.createElement("button");
   delBtn.className = "btn-sm";
-  delBtn.textContent = "🗑";
+  delBtn.textContent = "Delete task";
   delBtn.dataset.action = "delete";
   const toggleBtn = document.createElement("button");
   toggleBtn.className = "btn";
-  toggleBtn.textContent = "✓";
+  toggleBtn.textContent = "Done";
   toggleBtn.dataset.action = "toggle";
+  delBtn.type = "button";
+  toggleBtn.type = "button";
 
-  li.appendChild(actions);
   li.appendChild(name);
+  li.appendChild(actions);
   actions.appendChild(delBtn);
   actions.appendChild(toggleBtn);
   return li;
 }
 function renderTasks() {
   taskList.innerHTML = "";
-  for (task of state.tasks) {
-    const li = createTaskNode(task);
-    taskList.appendChild(li);
+  for (const task of state.tasks) {
+    taskList.appendChild(createTaskNode(task));
   }
 }
-function load() {
-  const data = localStorage.getItem("savedTasks");
-  if (!data) return []; // nic zapisane → pusta tablica
-  return JSON.parse(data);
-}
+
 function clearAll() {
-  localStorage.clearAll;
-  taskList.innerHTML = "";
+  localStorage.removeItem(STORAGE_KEY);
   state.tasks = [];
+  taskList.innerHTML = "";
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
 }

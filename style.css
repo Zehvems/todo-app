@@ -65,7 +65,6 @@ body {
   border-color: #4a4a4a;
 }
 
-/* jasny motyw */
 body.light {
   --bg: #f6f7f9;
   --text: #222;
