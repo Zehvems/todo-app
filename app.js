@@ -1,6 +1,5 @@
 const buttons = document.querySelectorAll(".btn"); //Bottons
 const themeBtn = document.getElementById("themeBtn");
-const saveBtn = document.getElementById("saveBtn");
 const clearBtn = document.getElementById("clearBtn");
 
 const input = document.getElementById("taskInput"); //Other
@@ -9,10 +8,11 @@ const form = document.getElementById("taskForm");
 const STORAGE_KEY = "tasks";
 let idCounter = 1;
 
-const state = { tasks: [], theme: "dark" }; //State
-//--------------------------------------------------------------------------
-if (!themeBtn || !saveBtn || !input || !taskList || !clearBtn || !form)
+const state = { tasks: [], theme: "dark" }; //state
+//-------------------------------------------------------------------------- helpers
+if (!themeBtn || !input || !taskList || !clearBtn || !form)
   throw new Error("Missing DOM element!");
+//local storage load
 try {
   state.tasks = load();
   renderTasks();
@@ -35,9 +35,6 @@ for (const task of state.tasks) {
 clearBtn.addEventListener("click", () => {
   clearAll();
 });
-saveBtn.addEventListener("click", () => {
-  save();
-});
 //KeyListener
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") input.value = "";
@@ -49,7 +46,7 @@ buttons.forEach((btn) => {
     btn.classList.add("clicked");
     setTimeout(() => {
       btn.classList.remove("clicked");
-    }, 200);
+    }, 150);
   });
 });
 
@@ -57,6 +54,7 @@ buttons.forEach((btn) => {
 form.addEventListener("submit", (e) => {
   e.preventDefault(); // zatrzymaj wysyłanie
   addTask();
+  save();
 });
 
 //theme switch
@@ -81,11 +79,13 @@ taskList.addEventListener("click", (e) => {
   if (action === "delete") {
     state.tasks = state.tasks.filter((t) => t.id !== id);
     li.remove();
+    save();
   } else if (action === "toggle") {
     const t = state.tasks.find((t) => t.id === id);
     if (!t) return;
     t.completed = !t.completed;
     li.classList.toggle("task--completed");
+    save();
   }
 });
 //functions------------------------------------------------------------------
@@ -100,7 +100,7 @@ function addTask() {
     input.value = "";
   }
 }
-//addtask to state , generate ID
+//add task to state / generate ID
 function addToState(title) {
   const task = { id: Date.now() + idCounter++, title, completed: false };
   state.tasks.push(task);
@@ -140,7 +140,7 @@ function renderTasks() {
     taskList.appendChild(createTaskNode(task));
   }
 }
-
+//clear all data/tasks
 function clearAll() {
   localStorage.removeItem(STORAGE_KEY);
   state.tasks = [];
