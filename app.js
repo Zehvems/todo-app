@@ -6,7 +6,7 @@ import {
   removeTask,
   clearAll as clearAllData,
 } from "./data.js";
-import { bindUI, renderTasks, getEls } from "./ui.js";
+import { bindUI, renderTasks, getEls, getElementAfterY } from "./ui.js";
 
 // Mały stan UI (temat zostaje tutaj)
 const view = { theme: "dark" };

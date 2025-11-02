@@ -12,6 +12,7 @@ export function createTaskNode(task) {
   const li = document.createElement("li");
   li.className = "task";
   li.dataset.id = task.id;
+  li.draggable = true;
   if (task.completed) li.classList.add("task--completed");
 
   const name = document.createElement("span");
@@ -40,7 +41,14 @@ export function createTaskNode(task) {
   li.appendChild(actions);
   return li;
 }
-
+export function getElementAfterY(container, y) {
+  const items = [...container.querySelectorAll(".task:not(.dragging)")];
+  return items.find((el) => {
+    const rect = el.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2;
+    return y <= mid; // pierwsze, którego środek jest poniżej kursora
+  });
+}
 export function renderTasks(tasks) {
   const { taskList } = getEls();
   taskList.innerHTML = "";
@@ -71,7 +79,25 @@ export function bindUI({ onAdd, onToggle, onRemove, onClear, onThemeToggle }) {
     if (btn.dataset.action === "delete") onRemove(id);
     else if (btn.dataset.action === "toggle") onToggle(id);
   });
+  taskList.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const dragging = taskList.querySelector(".task.dragging");
+    if (!dragging) return;
+    const after = getElementAfterY(taskList, e.clientY);
+    if (!after) taskList.appendChild(dragging);
+    else taskList.insertBefore(dragging, after);
+  });
+  taskList.addEventListener("dragstart", (e) => {
+    const li = e.target.closest(".task");
+    if (!li) return;
+    li.classList.add("dragging");
+  });
 
+  taskList.addEventListener("dragend", (e) => {
+    const li = e.target.closest(".task");
+    if (!li) return;
+    li.classList.remove("dragging");
+  });
   clearBtn.addEventListener("click", () => onClear());
 
   themeBtn.addEventListener("click", () => {

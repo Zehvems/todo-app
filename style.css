@@ -114,6 +114,15 @@ h1 {
 .task:hover {
   border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
 }
+.task.dragging {
+  opacity: 0.3;
+  transform: scale(0.9);
+  background: #333;
+}
+
+.task.over {
+  outline: 1px dashed #888;
+}
 
 .task__name {
   flex: 1;
