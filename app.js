@@ -5,6 +5,7 @@ import {
   toggleTask,
   removeTask,
   clearAll as clearAllData,
+  reorderTasks, // ← import
 } from "./data.js";
 import { bindUI, renderTasks, getEls, getElementAfterY } from "./ui.js";
 
@@ -47,5 +48,9 @@ bindUI({
     refresh();
   },
   onThemeToggle: handleThemeToggle,
+  onReorder: (ids) => {
+    reorderTasks(ids);
+    refresh();
+  },
 });
 refresh();

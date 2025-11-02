@@ -1,6 +1,14 @@
 let tasks = [];
 const STORAGE_KEY = "tasks";
 let idCounter = 1;
+export function reorderTasks(orderIds) {
+  const byId = new Map(tasks.map((t) => [t.id, t]));
+  const reordered = orderIds.map((id) => byId.get(id)).filter(Boolean);
+  // dopnij ewentualne brakujące (gdyby coś nie było w DOM)
+  for (const t of tasks) if (!orderIds.includes(t.id)) reordered.push(t);
+  tasks = reordered;
+  save(tasks);
+}
 
 function save(list) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));

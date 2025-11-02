@@ -56,7 +56,14 @@ export function renderTasks(tasks) {
 }
 
 /** Podłącza zdarzenia i deleguje do handlerów z app.js */
-export function bindUI({ onAdd, onToggle, onRemove, onClear, onThemeToggle }) {
+export function bindUI({
+  onAdd,
+  onToggle,
+  onRemove,
+  onClear,
+  onThemeToggle,
+  onReorder,
+}) {
   const { form, input, taskList, clearBtn, themeBtn } = getEls();
 
   if (!form || !input || !taskList || !clearBtn || !themeBtn)
@@ -97,6 +104,10 @@ export function bindUI({ onAdd, onToggle, onRemove, onClear, onThemeToggle }) {
     const li = e.target.closest(".task");
     if (!li) return;
     li.classList.remove("dragging");
+    const ids = [...taskList.querySelectorAll(".task")].map((li) =>
+      Number(li.dataset.id)
+    );
+    onReorder?.(ids);
   });
   clearBtn.addEventListener("click", () => onClear());
 
